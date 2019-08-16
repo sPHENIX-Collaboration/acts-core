@@ -50,6 +50,7 @@ struct StepWiseActor {
     std::vector<Jacobian> jacobians = {};
     std::vector<double> paths = {};
 
+    //~ Jacobian fullJacobian = Jacobian::Identity();
     double fullPath = 0.;
 
     bool finalized = false;
