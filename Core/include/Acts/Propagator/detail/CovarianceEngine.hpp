@@ -65,8 +65,7 @@ std::tuple<CurvilinearParameters, BoundMatrix, double> curvilinearState(
 /// @note No check is done if the position is actually on the surface
 ///
 /// @return Projection jacobian from global to bound parameters
-void covarianceTransport(StepperState& state,
-                         const Surface* surface = nullptr);
+void covarianceTransport(StepperState& state, const Surface* surface = nullptr);
 
 }  // namespace detail
 }  // namespace Acts
