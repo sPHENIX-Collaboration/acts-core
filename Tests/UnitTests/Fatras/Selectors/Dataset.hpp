@@ -8,8 +8,6 @@
 
 #include <boost/test/data/test_case.hpp>
 
-#include "Acts/Material/MaterialProperties.hpp"
-#include "Acts/Tests/CommonHelpers/PredefinedMaterials.hpp"
 #include "Acts/Utilities/PdgParticle.hpp"
 #include "Acts/Utilities/Units.hpp"
 #include "ActsFatras/EventData/Particle.hpp"
@@ -18,10 +16,6 @@ namespace Dataset {
 namespace {
 
 using namespace Acts::UnitLiterals;
-
-Acts::Material material = Acts::Test::makeBeryllium();
-Acts::MaterialProperties thinSlab(material, 1_mm);
-Acts::MaterialProperties thickSlab(material, 15_cm);
 
 constexpr auto massElectron = 0.51099891_MeV;
 constexpr auto massMuon = 105.658367_MeV;
