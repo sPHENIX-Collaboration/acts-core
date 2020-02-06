@@ -24,11 +24,10 @@ constexpr auto massPion = 134.9766_MeV;
 ActsFatras::Particle makeParticle(double z, double eta, Acts::PdgParticle pdg,
                                   double m, double q) {
   const auto id = ActsFatras::Barcode().setVertexPrimary(1).setParticle(1);
-  ActsFatras::Particle particle(id, pdg, m, q);
-  particle.setPosition({0.0, 0.0, z, 0.0});
-  particle.setDirection({1.0 / std::cosh(eta), 0.0, std::tanh(eta)});
-  particle.setMomentum(1.5_GeV);
-  return particle;
+  return ActsFatras::Particle(id, pdg, m, q)
+      .setPosition({0.0, 0.0, z, 0.0})
+      .setDirection({1.0 / std::cosh(eta), 0.0, std::tanh(eta)})
+      .setMomentum(1.5_GeV);
 }
 
 const auto centralElectron =

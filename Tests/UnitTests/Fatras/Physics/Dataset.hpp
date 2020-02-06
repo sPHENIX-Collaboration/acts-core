@@ -62,15 +62,14 @@ inline ActsFatras::Particle makeParticle(double phi, double lambda, double p,
   ActsFatras::Barcode id;
   id.setVertexPrimary(1);
   id.setParticle(1);
-  ActsFatras::Particle particle(id, pdg, m, q);
-  particle.setPosition({0, 0, 0, 0});
-  particle.setDirection({
-      std::cos(lambda) * std::cos(phi),
-      std::cos(lambda) * std::sin(phi),
-      std::sin(lambda),
-  });
-  particle.setMomentum(p);
-  return particle;
+  return ActsFatras::Particle(id, pdg, m, q)
+      .setPosition({0, 0, 0, 0})
+      .setDirection({
+          std::cos(lambda) * std::cos(phi),
+          std::cos(lambda) * std::sin(phi),
+          std::sin(lambda),
+      })
+      .setMomentum(p);
 }
 
 }  // namespace

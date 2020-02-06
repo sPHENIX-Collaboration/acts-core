@@ -40,31 +40,41 @@ class Particle {
   Particle &operator=(Particle &&) = default;
 
   /// Set the space-time position.
-  void setPosition(const Vector4 &pos4) { m_position4 = pos4; }
+  Particle &setPosition(const Vector4 &pos4) {
+    m_position4 = pos4;
+    return *this;
+  }
   /// Set the space-time position from three-position and time.
-  void setPosition(const Vector3 &position, Scalar time) {
+  Particle &setPosition(const Vector3 &position, Scalar time) {
     m_position4.head<3>() = position;
     m_position4[3] = time;
+    return *this;
   }
   /// Set the direction.
-  void setDirection(const Vector3 &direction) {
+  Particle &setDirection(const Vector3 &direction) {
     m_direction = direction;
     m_direction.normalize();
+    return *this;
   }
   /// Set the absolute momentum.
-  void setMomentum(Scalar momentum) { m_momentum = momentum; }
+  Particle &setMomentum(Scalar momentum) {
+    m_momentum = momentum;
+    return *this;
+  }
+
   /// Change the energy by the given amount.
   ///
   /// Energy loss corresponds to a negative change. If the updated energy
   /// would result in an unphysical value, the particle is put to rest, i.e.
   /// its absolute momentum is set to zero.
-  void correctEnergy(Scalar delta) {
+  Particle &correctEnergy(Scalar delta) {
     const auto newEnergy = std::hypot(m_mass, m_momentum) + delta;
     if (newEnergy <= m_mass) {
       m_momentum = Scalar(0);
     } else {
       m_momentum = std::sqrt(newEnergy * newEnergy - m_mass * m_mass);
     }
+    return *this;
   }
 
   /// Encoded particle identifier within an event.
@@ -108,7 +118,7 @@ class Particle {
   Acts::PdgParticle m_pdg = Acts::PdgParticle::eInvalid;
   /// Particle mass and charge
   Scalar m_mass = Scalar(0);
-  Scalar m_charge = Scalar(1);
+  Scalar m_charge = Scalar(0);
   // kinematics, i.e. things that change over the particle lifetime.
   Vector3 m_direction = Vector3::UnitZ();
   Scalar m_momentum = Scalar(0);
