@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include <array>
 #include <cmath>
 #include <random>
-#include <vector>
 
 #include "Acts/Material/MaterialProperties.hpp"
 #include "Acts/Utilities/Definitions.hpp"
@@ -40,9 +40,9 @@ struct Scattering {
   ///
   /// @tparam generator_t is a RandomNumberEngine
   template <typename generator_t>
-  std::vector<Particle> operator()(generator_t &generator,
-                                   const Acts::MaterialProperties &slab,
-                                   Particle &particle) const {
+  std::array<Particle, 0> operator()(generator_t &generator,
+                                     const Acts::MaterialProperties &slab,
+                                     Particle &particle) const {
     // Do nothing if the flag is set to false
     if (not scattering) {
       return {};

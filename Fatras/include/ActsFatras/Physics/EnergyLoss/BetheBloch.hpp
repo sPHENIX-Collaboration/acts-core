@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include "Acts/Material/Interactions.hpp"
 #include "Acts/Material/MaterialProperties.hpp"
@@ -39,9 +39,9 @@ struct BetheBloch {
   ///
   /// @tparam generator_t is a RandomNumberEngine
   template <typename generator_t>
-  std::vector<Particle> operator()(generator_t &generator,
-                                   const Acts::MaterialProperties &slab,
-                                   Particle &particle) const {
+  std::array<Particle, 0> operator()(generator_t &generator,
+                                     const Acts::MaterialProperties &slab,
+                                     Particle &particle) const {
     // Do nothing if the flag is set to false
     if (not betheBloch) {
       return {};
