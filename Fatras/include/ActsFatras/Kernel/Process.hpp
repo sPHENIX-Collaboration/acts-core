@@ -8,56 +8,62 @@
 
 #pragma once
 
-#include <cmath>
-
-#include "Acts/Utilities/Definitions.hpp"
+#include "Acts/Material/MaterialProperties.hpp"
+#include "ActsFatras/EventData/Particle.hpp"
 
 namespace ActsFatras {
 
-/// @brief Process class that turns a parameterized or
-/// tabularized fast simulation module into a process that
-/// can be plugged into the PhysicsList
-///
-/// This is plugin for physics processes
-///  - scattering
-///  - energy loss
-///  - pair production
-///  - hadronic interaction
-///  - decay
-///
-/// The type (and actual trigger) of the particle
-/// and interaction is steered via the Selector list
-/// for in and out.
-template <typename physics_t, typename selector_in_t, typename selector_out_t,
-          typename selector_child_t>
+/// No-op particle selector that selects all particles.
+struct EveryParticle {
+  constexpr bool operator()(const Particle &) const { return true; }
+};
 
+/// A simulation process based on a physics interaction plus selectors.
+///
+/// @tparam physics_t         is the physics interaction type
+/// @tparam input_selector_t  is the input particle selector
+/// @tparam output_selector_t is the output particle selector
+/// @tparam child_selector_t  is the child particle selector
+///
+/// The input selector defines whether the interaction is applied while the
+/// output selector defines a break condition, i.e. whether to continue
+/// simulating the particle propagation.
+template <typename physics_t, typename input_selector_t = EveryParticle,
+          typename output_selector_t = EveryParticle,
+          typename child_selector_t = EveryParticle>
 struct Process {
-  /// The actual physics that is happening
-  physics_t process;
+  /// The physics interactions implementation.
+  physics_t physics;
+  /// Input selection: which particles should the process be applied to.
+  input_selector_t selectInput;
+  /// Output selection: is the particle still valid after the interaction.
+  output_selector_t selectOutput;
+  /// Child selection: which generated child particles to keep.
+  child_selector_t selectChild;
 
-  /// The selector list
-  selector_in_t selectorIn;
-  selector_out_t selectorOut;
-  selector_child_t selectorChild;
-
-  /// This is the scattering call operator
-  template <typename generator_t, typename detector_t, typename particle_t>
-  bool operator()(generator_t &gen, const detector_t &det, particle_t &in,
-                  std::vector<particle_t> &out) const {
-    // check if the process applies
-    if (selectorIn(det, in)) {
-      // apply energy loss and get eventual children
-      auto children = process(gen, det, in);
-      if (children.size()) {
-        // copy the children that comply with the child selector
-        std::copy_if(
-            children.begin(), children.end(), std::back_inserter(out),
-            [this, det](const particle_t &p) { return selectorChild(det, p); });
-      }
+  /// Execute the physics process considering the configured selectors.
+  ///
+  /// @param[in]     generator is the random number generator
+  /// @param[in]     slab      is the passed material
+  /// @param[in,out] particle  is the particle being updated
+  /// @param[out]    generated is the container of generated
+  /// @return Break condition, i.e. whether this process stops the propagation
+  ///
+  /// @tparam generator_t must be a RandomNumberEngine
+  template <typename generator_t>
+  bool operator()(generator_t &generator, const Acts::MaterialProperties &slab,
+                  Particle &particle, std::vector<Particle> &generated) const {
+    // not selecting this process for a particle is not a break condition
+    if (not selectInput(particle)) {
+      return false;
     }
-    // check if this killed the particle,
-    // or pushed below threshold
-    return (!selectorOut(det, in));
+    // modify particle according to the physics process and select children
+    auto children = physics(generator, slab, particle);
+    std::copy_if(children.begin(), children.end(),
+                 std::back_inserter(generated), selectChild);
+    // break condition is defined by whether the output particle is still valid
+    // or not e.g. because it has fallen below a momentum threshold.
+    return not selectOutput(particle);
   }
 };
 
