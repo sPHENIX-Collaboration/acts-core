@@ -286,6 +286,7 @@ class KalmanFitter {
         // -> Feed the KalmanSequencer with the measurements to be fitted
         ACTS_VERBOSE("Initializing");
         initialize(state, stepper, result);
+	ACTS_VERBOSE("Initialized KF");
         result.initialized = true;
       }
 
@@ -293,6 +294,7 @@ class KalmanFitter {
       // - Waiting for a current surface that has material
       // -> a trackState will be created on surface with material
       auto surface = state.navigation.currentSurface;
+      ACTS_VERBOSE("Checking Surface");
       if (surface and surface->surfaceMaterial()) {
         // Check if the surface is in the measurement map
         // -> Get the measurement / calibrate
@@ -317,7 +319,7 @@ class KalmanFitter {
           }
         }
       }
-
+      ACTS_VERBOSE("Finalizing");
       // Finalization:
       // when all track states have been handled or the navigation is breaked,
       // reset navigation&stepping before run backward filtering or
@@ -347,7 +349,7 @@ class KalmanFitter {
           }
         }
       }
-
+      ACTS_VERBOSE("Post Finalizing");
       // Post-finalization:
       // - Progress to target/reference surface and built the final track
       // parameters
