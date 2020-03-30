@@ -30,10 +30,9 @@ option(ACTS_BUILD_EXAMPLES "Build examples" OFF)
 option(ACTS_BUILD_UNITTESTS "Build unit tests" OFF)
 option(ACTS_BUILD_INTEGRATIONTESTS "Build integration tests" OFF)
 option(ACTS_BUILD_DOC "Build documentation" OFF)
-
 # all other compile-time parameters must be defined here for clear visibility
 # and to avoid forgotten options somewhere deep in the hierarchy
-set(ACTS_PARAMETER_DEFINITIONS_PLUGIN "Acts/Utilities/detail/DefaultParameterDefinitions.hpp" CACHE FILEPATH "Default track parameter definition")
+set(ACTS_PARAMETER_DEFINITIONS_HEADER "" CACHE FILEPATH "Use a different (track) parameter definitions header")
 
 # handle inter-plugin dependencies
 # DD4hepPlugin depends on TGeoPlugin
@@ -53,7 +52,7 @@ include(TargetSourcesLocal) # needed only until we require CMake 3.13
 
 # required packages
 set(Boost_NO_BOOST_CMAKE ON) # disable new cmake features from Boost 1.70 on
-find_package(Boost 1.62 REQUIRED COMPONENTS program_options unit_test_framework)
+find_package(Boost 1.69 REQUIRED COMPONENTS program_options unit_test_framework)
 find_package(Eigen 3.2.9 REQUIRED)
 
 # optional packages
